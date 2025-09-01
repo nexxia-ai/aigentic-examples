@@ -1,4 +1,4 @@
-module benchmark
+module github.com/nexxia-ai/aigentic-examples/benchmark
 
 go 1.24.3
 

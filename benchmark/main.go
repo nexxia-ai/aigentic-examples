@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"benchmark/core"
+	"github.com/nexxia-ai/aigentic-examples/benchmark/core"
 
 	gemini "github.com/nexxia-ai/aigentic-google"
 	ollama "github.com/nexxia-ai/aigentic-ollama"
@@ -76,7 +76,7 @@ var modelsTable = []ModelDesc{
 
 func main() {
 	// Load environment variables
-	utils.LoadEnvFile("./.env")
+	utils.LoadEnvFile("../.env")
 
 	// Define command-line flags
 	var testsFlag string

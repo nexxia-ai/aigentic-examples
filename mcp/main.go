@@ -25,7 +25,7 @@ var config = &ai.MCPConfig{
 }
 
 func init() {
-	utils.LoadEnvFile("./.env")
+	utils.LoadEnvFile("../.env")
 }
 
 func main() {

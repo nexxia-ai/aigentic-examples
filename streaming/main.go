@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	utils.LoadEnvFile("./.env")
+	utils.LoadEnvFile("../.env")
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go run main.go \"Your question here\"")

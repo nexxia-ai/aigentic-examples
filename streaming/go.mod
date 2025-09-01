@@ -1,4 +1,4 @@
-module streaming-example
+module github.com/nexxia-ai/aigentic-examples/streaming
 
 go 1.24.3
 

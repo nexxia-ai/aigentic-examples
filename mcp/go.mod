@@ -1,4 +1,4 @@
-module mcp
+module github.com/nexxia-ai/aigentic-examples/mcp
 
 go 1.24.3
 

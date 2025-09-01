@@ -1,4 +1,4 @@
-module showcase
+module github.com/nexxia-ai/aigentic-examples/simple
 
 go 1.24.3
 

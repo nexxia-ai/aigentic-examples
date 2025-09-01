@@ -23,7 +23,6 @@ var (
 )
 
 func getAPIKey() string {
-	utils.LoadEnvFile("./.env")
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
 		fmt.Println("Warning: OPENAI_API_KEY environment variable not set")
@@ -116,6 +115,8 @@ func createCalculatorTool() aigentic.AgentTool {
 }
 
 func main() {
+	utils.LoadEnvFile("../.env")
+
 	fmt.Println("🤖 Aigentic Agent Showcase")
 	fmt.Println("==========================")
 	fmt.Println()
