@@ -45,6 +45,7 @@ func openAIProvider(modelName string) *ai.Model {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
 		slog.Error("OPENAI_API_KEY is not set")
+		os.Exit(1)
 		return nil
 	}
 	return openai.NewModel(modelName, apiKey)
@@ -58,6 +59,7 @@ func geminiProvider(modelName string) *ai.Model {
 	apiKey := os.Getenv("GOOGLE_API_KEY")
 	if apiKey == "" {
 		slog.Error("GOOGLE_API_KEY is not set")
+		os.Exit(1)
 		return nil
 	}
 	return gemini.NewGeminiModel(modelName, apiKey)
@@ -71,11 +73,10 @@ var modelsTable = []ModelDesc{
 	{Name: "llama3.2", ProviderFunc: ollamaProvider},
 	{Name: "gemma", ProviderFunc: ollamaProvider},
 	{Name: "deepseek", ProviderFunc: ollamaProvider},
-	{Name: "gemini", ProviderFunc: geminiProvider},
+	// {Name: "gemini", ProviderFunc: geminiProvider},
 }
 
 func main() {
-	// Load environment variables
 	utils.LoadEnvFile("../.env")
 
 	// Define command-line flags

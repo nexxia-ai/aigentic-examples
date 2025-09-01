@@ -11,6 +11,16 @@ import (
 	"github.com/nexxia-ai/aigentic/utils"
 )
 
+func getAPIKey() string {
+	apiKey := os.Getenv("OPENAI_API_KEY")
+	if apiKey == "" {
+		fmt.Println("Warning: OPENAI_API_KEY environment variable not set")
+		fmt.Println("Please set your OpenAI API key: export OPENAI_API_KEY=your_api_key_here")
+		os.Exit(1)
+	}
+	return apiKey
+}
+
 func main() {
 	utils.LoadEnvFile("../.env")
 
@@ -20,11 +30,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" {
-		log.Fatal("OPENAI_API_KEY environment variable is required")
-	}
-
+	apiKey := getAPIKey()
 	model := openai.NewModel("gpt-4o-mini", apiKey)
 
 	agent := aigentic.Agent{

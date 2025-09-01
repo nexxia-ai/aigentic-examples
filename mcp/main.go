@@ -24,16 +24,26 @@ var config = &ai.MCPConfig{
 	},
 }
 
-func init() {
-	utils.LoadEnvFile("../.env")
+func getAPIKey() string {
+	apiKey := os.Getenv("OPENAI_API_KEY")
+	if apiKey == "" {
+		fmt.Println("Warning: OPENAI_API_KEY environment variable not set")
+		fmt.Println("Please set your OpenAI API key: export OPENAI_API_KEY=your_api_key_here")
+		os.Exit(1)
+	}
+	return apiKey
 }
 
 func main() {
+	utils.LoadEnvFile("../.env")
+
 	mcpHost, err := ai.NewMCPHost(config)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer mcpHost.Close()
+
+	apiKey := getAPIKey()
 
 	agentTools := []aigentic.AgentTool{}
 	for _, client := range mcpHost.Clients {
@@ -43,7 +53,7 @@ func main() {
 	}
 
 	agent := aigentic.Agent{
-		Model:       openai.NewModel("gpt-4o-mini", os.Getenv("OPENAI_API_KEY")),
+		Model:       openai.NewModel("gpt-4o-mini", apiKey),
 		Name:        "News Agent",
 		Description: "You are a news agent that fetches the latest news from the website and saves it to a file",
 		Instructions: `

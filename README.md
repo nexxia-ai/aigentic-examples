@@ -13,20 +13,20 @@ $env:OPENAI_API_KEY="your_openai_key"
 
 - **simple** - Basic usage examples
   ```bash
-  go run github.com/nexxia-ai/aigentic-examples/simple/main.go
+  go run github.com/nexxia-ai/aigentic-examples/simple@latest
   ```
 
 - **streaming** - Streaming response examples  
   ```bash
-  go run github.com/nexxia-ai/aigentic-examples/streaming/main.go
+  go run github.com/nexxia-ai/aigentic-examples/streaming@latest
   ```
 
 - **mcp** - Model Context Protocol examples
   ```bash
-  go run github.com/nexxia-ai/aigentic-examples/mcp/main.go
+  go run github.com/nexxia-ai/aigentic-examples/mcp@latest
   ```
 
 - **benchmark** - Performance benchmarking examples
   ```bash
-  go run github.com/nexxia-ai/aigentic-examples/benchmark/main.go
+  go run github.com/nexxia-ai/aigentic-examples/benchmark@latest
   ```
