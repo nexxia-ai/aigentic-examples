@@ -3,7 +3,7 @@ module github.com/nexxia-ai/aigentic-examples/tools
 go 1.24.3
 
 require (
-	github.com/nexxia-ai/aigentic v0.6.0
+	github.com/nexxia-ai/aigentic v0.7.0
 	github.com/nexxia-ai/aigentic-openai v0.3.1
 )
 

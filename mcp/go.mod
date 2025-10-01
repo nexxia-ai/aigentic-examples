@@ -3,7 +3,7 @@ module github.com/nexxia-ai/aigentic-examples/mcp
 go 1.24.3
 
 require (
-	github.com/nexxia-ai/aigentic v0.4.1-0.20250824033137-821113f5179e
+	github.com/nexxia-ai/aigentic v0.7.0
 	github.com/nexxia-ai/aigentic-openai v0.2.1
 )
 

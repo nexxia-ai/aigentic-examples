@@ -58,38 +58,23 @@ go run main.go --auto
 Set `RequireApproval: true` on any tool that needs human oversight:
 
 ```go
-emailTool := aigentic.AgentTool{
-    Name:            "send_email",
-    Description:     "Sends an email to a recipient",
-    RequireApproval: true, // Enable approval
-    InputSchema: map[string]interface{}{
-        "type": "object",
-        "properties": map[string]interface{}{
-            "to": map[string]interface{}{
-                "type":        "string",
-                "description": "Email recipient",
-            },
-            "subject": map[string]interface{}{
-                "type":        "string",
-                "description": "Email subject",
-            },
-            "body": map[string]interface{}{
-                "type":        "string",
-                "description": "Email body",
-            },
-        },
-        "required": []string{"to", "subject", "body"},
-    },
-    Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-        // Tool implementation...
-        return &ai.ToolResult{
-            Content: []ai.ToolContent{{
-                Type:    "text",
-                Content: "Email sent successfully",
-            }},
-        }, nil
-    },
+// Define input struct with JSON tags
+type SendEmailInput struct {
+    To      string `json:"to" description:"Email recipient"`
+    Subject string `json:"subject" description:"Email subject"`
+    Body    string `json:"body" description:"Email body"`
 }
+
+// Create tool using aigentic.NewTool
+emailTool := aigentic.NewTool(
+    "send_email",
+    "Sends an email to a recipient",
+    func(run *aigentic.AgentRun, input SendEmailInput) (string, error) {
+        // Tool implementation...
+        return "Email sent successfully", nil
+    },
+)
+emailTool.RequireApproval = true // Enable approval
 ```
 
 ### 2. Handle Approval Events

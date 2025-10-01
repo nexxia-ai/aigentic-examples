@@ -43,32 +43,31 @@ Each tool consists of:
 ### Example Tool Definition
 
 ```go
-calculatorTool := aigentic.AgentTool{
-    Name:        "calculator",
-    Description: "Performs mathematical calculations",
-    InputSchema: map[string]interface{}{
-        "type": "object",
-        "properties": map[string]interface{}{
-            "expression": map[string]interface{}{
-                "type":        "string",
-                "description": "Mathematical expression to evaluate",
-            },
-        },
-        "required": []string{"expression"},
-    },
-    Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-        expr := args["expression"].(string)
-        result := evaluateExpression(expr)
-
-        return &ai.ToolResult{
-            Content: []ai.ToolContent{{
-                Type:    "text",
-                Content: fmt.Sprintf("Result: %v", result),
-            }},
-        }, nil
-    },
+// Define input struct with JSON tags for automatic schema generation
+type CalculatorInput struct {
+    Expression string `json:"expression" description:"Mathematical expression to evaluate"`
 }
+
+// Create tool using aigentic.NewTool for type safety and automatic schema generation
+calculatorTool := aigentic.NewTool(
+    "calculator",
+    "Performs mathematical calculations",
+    func(run *aigentic.AgentRun, input CalculatorInput) (string, error) {
+        result, err := evaluateExpression(input.Expression)
+        if err != nil {
+            return "", fmt.Errorf("error evaluating expression: %v", err)
+        }
+        return fmt.Sprintf("Result: %v", result), nil
+    },
+)
 ```
+
+### Benefits of the New Approach
+
+- **Type Safety**: Input parameters are strongly typed
+- **Automatic Schema Generation**: JSON schema is generated from struct tags
+- **Cleaner Code**: No manual schema definitions or type assertions
+- **Better Error Handling**: Return errors directly instead of wrapping in ToolResult
 
 ## Best Practices
 

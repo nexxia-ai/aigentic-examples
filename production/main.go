@@ -11,7 +11,6 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	openai "github.com/nexxia-ai/aigentic-openai"
-	"github.com/nexxia-ai/aigentic/ai"
 	"github.com/nexxia-ai/aigentic/utils"
 )
 
@@ -49,57 +48,29 @@ func example1RobustErrorHandling() {
 	model := openai.NewModel("gpt-4o-mini", apiKey)
 
 	// Create a tool that can fail in different ways
-	unreliableTool := aigentic.AgentTool{
-		Name:        "check_status",
-		Description: "Checks system status (may fail)",
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"service": map[string]interface{}{
-					"type":        "string",
-					"description": "Service name to check",
-				},
-			},
-			"required": []string{"service"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			service, ok := args["service"].(string)
-			if !ok {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: "Error: service parameter must be a string",
-					}},
-					Error: true,
-				}, nil
-			}
+	type CheckStatusInput struct {
+		Service string `json:"service" description:"Service name to check"`
+	}
 
+	unreliableTool := aigentic.NewTool(
+		"check_status",
+		"Checks system status (may fail)",
+		func(run *aigentic.AgentRun, input CheckStatusInput) (string, error) {
 			// Simulate different error scenarios
-			if service == "database" {
-				// Tool error - graceful handling
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: "Database connection failed: timeout after 5s. This is a recoverable error.",
-					}},
-					Error: true,
-				}, nil
+			if input.Service == "database" {
+				// Return error that will be handled gracefully
+				return "", errors.New("database connection failed: timeout after 5s. This is a recoverable error")
 			}
 
-			if service == "api" {
+			if input.Service == "api" {
 				// Critical error - return as Go error
-				return nil, errors.New("API service check failed: internal error")
+				return "", errors.New("API service check failed: internal error")
 			}
 
 			// Success case
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("%s service is healthy", service),
-				}},
-			}, nil
+			return fmt.Sprintf("%s service is healthy", input.Service), nil
 		},
-	}
+	)
 
 	agent := aigentic.Agent{
 		Model:        model,
@@ -194,23 +165,14 @@ func example3MaxLLMCalls() {
 	model := openai.NewModel("gpt-4o-mini", apiKey)
 
 	// Create a tool that encourages repeated calls
-	recursiveTool := aigentic.AgentTool{
-		Name:        "generate_number",
-		Description: "Generates a random-looking number",
-		InputSchema: map[string]interface{}{
-			"type":       "object",
-			"properties": map[string]interface{}{},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
+	recursiveTool := aigentic.NewTool(
+		"generate_number",
+		"Generates a random-looking number",
+		func(run *aigentic.AgentRun, input struct{}) (string, error) {
 			// Each call returns a different result, potentially causing repeated calls
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("Generated number: %d", time.Now().Unix()%100),
-				}},
-			}, nil
+			return fmt.Sprintf("Generated number: %d", time.Now().Unix()%100), nil
 		},
-	}
+	)
 
 	agent := aigentic.Agent{
 		Model:        model,
@@ -247,30 +209,21 @@ func example4Retries() {
 	model := openai.NewModel("gpt-4o-mini", apiKey)
 
 	callCount := 0
-	flakyTool := aigentic.AgentTool{
-		Name:        "flaky_service",
-		Description: "A service that fails sometimes but eventually succeeds",
-		InputSchema: map[string]interface{}{
-			"type":       "object",
-			"properties": map[string]interface{}{},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
+	flakyTool := aigentic.NewTool(
+		"flaky_service",
+		"A service that fails sometimes but eventually succeeds",
+		func(run *aigentic.AgentRun, input struct{}) (string, error) {
 			callCount++
 			fmt.Printf("  [Tool call #%d]\n", callCount)
 
 			// Fail on first call, succeed on retry
 			if callCount == 1 {
-				return nil, errors.New("temporary network error")
+				return "", errors.New("temporary network error")
 			}
 
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: "Service responded successfully!",
-				}},
-			}, nil
+			return "Service responded successfully!", nil
 		},
-	}
+	)
 
 	agent := aigentic.Agent{
 		Model:        model,
@@ -426,47 +379,25 @@ func example7ComprehensiveSetup() {
 	trace := aigentic.NewTrace()
 
 	// Production-ready tool with comprehensive error handling
-	dataTool := aigentic.AgentTool{
-		Name:        "fetch_data",
-		Description: "Fetches data from a database or API",
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"query": map[string]interface{}{
-					"type":        "string",
-					"description": "The data query to execute",
-				},
-			},
-			"required": []string{"query"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			query, ok := args["query"].(string)
-			if !ok {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: "Error: query must be a string",
-					}},
-					Error: true,
-				}, nil
-			}
+	type FetchDataInput struct {
+		Query string `json:"query" description:"The data query to execute"`
+	}
 
+	dataTool := aigentic.NewTool(
+		"fetch_data",
+		"Fetches data from a database or API",
+		func(run *aigentic.AgentRun, input FetchDataInput) (string, error) {
 			// Check context for cancellation
 			if run.Session().Context.Err() != nil {
-				return nil, run.Session().Context.Err()
+				return "", run.Session().Context.Err()
 			}
 
 			// Simulate data fetch
 			time.Sleep(100 * time.Millisecond)
 
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("Query '%s' returned 42 results", query),
-				}},
-			}, nil
+			return fmt.Sprintf("Query '%s' returned 42 results", input.Query), nil
 		},
-	}
+	)
 
 	agent := aigentic.Agent{
 		Model:        model,

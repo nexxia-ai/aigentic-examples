@@ -11,7 +11,6 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	openai "github.com/nexxia-ai/aigentic-openai"
-	"github.com/nexxia-ai/aigentic/ai"
 	"github.com/nexxia-ai/aigentic/utils"
 )
 
@@ -27,50 +26,21 @@ func getAPIKey() string {
 
 // createCalculatorTool demonstrates a mathematical calculator tool
 func createCalculatorTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:        "calculator",
-		Description: "Performs basic mathematical calculations. Supports +, -, *, /, sqrt, and ^ (power) operations.",
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"expression": map[string]interface{}{
-					"type":        "string",
-					"description": "Mathematical expression to evaluate (e.g., '2 + 2', '10 * 5', 'sqrt 16', '2 ^ 3')",
-				},
-			},
-			"required": []string{"expression"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			expr, ok := args["expression"].(string)
-			if !ok {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: "Error: expression must be a string",
-					}},
-					Error: true,
-				}, nil
-			}
-
-			result, err := evaluateExpression(expr)
-			if err != nil {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: fmt.Sprintf("Error evaluating expression: %v", err),
-					}},
-					Error: true,
-				}, nil
-			}
-
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("Result: %v", result),
-				}},
-			}, nil
-		},
+	type CalculatorInput struct {
+		Expression string `json:"expression" description:"Mathematical expression to evaluate (e.g., '2 + 2', '10 * 5', 'sqrt 16', '2 ^ 3')"`
 	}
+
+	return aigentic.NewTool(
+		"calculator",
+		"Performs basic mathematical calculations. Supports +, -, *, /, sqrt, and ^ (power) operations.",
+		func(run *aigentic.AgentRun, input CalculatorInput) (string, error) {
+			result, err := evaluateExpression(input.Expression)
+			if err != nil {
+				return "", fmt.Errorf("error evaluating expression: %v", err)
+			}
+			return fmt.Sprintf("Result: %v", result), nil
+		},
+	)
 }
 
 // evaluateExpression is a simple expression evaluator
@@ -128,52 +98,25 @@ func evaluateExpression(expr string) (float64, error) {
 
 // createWeatherTool demonstrates a mock weather API tool
 func createWeatherTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:        "get_weather",
-		Description: "Gets the current weather for a specified city",
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"city": map[string]interface{}{
-					"type":        "string",
-					"description": "The city name to get weather for",
-				},
-				"units": map[string]interface{}{
-					"type":        "string",
-					"description": "Temperature units: 'celsius' or 'fahrenheit'",
-					"enum":        []string{"celsius", "fahrenheit"},
-				},
-			},
-			"required": []string{"city"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			city, ok := args["city"].(string)
-			if !ok {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: "Error: city must be a string",
-					}},
-					Error: true,
-				}, nil
-			}
+	type WeatherInput struct {
+		City  string `json:"city" description:"The city name to get weather for"`
+		Units string `json:"units,omitempty" description:"Temperature units: 'celsius' or 'fahrenheit'" default:"celsius"`
+	}
 
-			units := "celsius"
-			if u, ok := args["units"].(string); ok {
-				units = u
+	return aigentic.NewTool(
+		"get_weather",
+		"Gets the current weather for a specified city",
+		func(run *aigentic.AgentRun, input WeatherInput) (string, error) {
+			units := input.Units
+			if units == "" {
+				units = "celsius"
 			}
 
 			// Mock weather data
-			weather := mockWeatherData(city, units)
-
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: weather,
-				}},
-			}, nil
+			weather := mockWeatherData(input.City, units)
+			return weather, nil
 		},
-	}
+	)
 }
 
 func mockWeatherData(city, units string) string {
@@ -196,53 +139,25 @@ func mockWeatherData(city, units string) string {
 
 // createTimeTool demonstrates a time utility tool
 func createTimeTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:        "get_current_time",
-		Description: "Gets the current time in a specified timezone",
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"timezone": map[string]interface{}{
-					"type":        "string",
-					"description": "IANA timezone name (e.g., 'America/New_York', 'Europe/London', 'Asia/Tokyo')",
-				},
-			},
-			"required": []string{"timezone"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			timezone, ok := args["timezone"].(string)
-			if !ok {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: "Error: timezone must be a string",
-					}},
-					Error: true,
-				}, nil
-			}
+	type TimeInput struct {
+		Timezone string `json:"timezone" description:"IANA timezone name (e.g., 'America/New_York', 'Europe/London', 'Asia/Tokyo')"`
+	}
 
-			loc, err := time.LoadLocation(timezone)
+	return aigentic.NewTool(
+		"get_current_time",
+		"Gets the current time in a specified timezone",
+		func(run *aigentic.AgentRun, input TimeInput) (string, error) {
+			loc, err := time.LoadLocation(input.Timezone)
 			if err != nil {
-				return &ai.ToolResult{
-					Content: []ai.ToolContent{{
-						Type:    "text",
-						Content: fmt.Sprintf("Error: invalid timezone '%s'. Use IANA timezone names like 'America/New_York'", timezone),
-					}},
-					Error: true,
-				}, nil
+				return "", fmt.Errorf("invalid timezone '%s'. Use IANA timezone names like 'America/New_York'", input.Timezone)
 			}
 
 			currentTime := time.Now().In(loc)
 			timeStr := currentTime.Format("Monday, January 2, 2006 at 3:04 PM MST")
 
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("Current time in %s: %s", timezone, timeStr),
-				}},
-			}, nil
+			return fmt.Sprintf("Current time in %s: %s", input.Timezone, timeStr), nil
 		},
-	}
+	)
 }
 
 func main() {

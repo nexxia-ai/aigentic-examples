@@ -3,7 +3,7 @@ module github.com/nexxia-ai/aigentic-examples/benchmark
 go 1.24.3
 
 require (
-	github.com/nexxia-ai/aigentic v0.6.0
+	github.com/nexxia-ai/aigentic v0.7.0
 	github.com/nexxia-ai/aigentic-google v0.2.0
 	github.com/nexxia-ai/aigentic-ollama v0.2.1
 	github.com/nexxia-ai/aigentic-openai v0.3.1

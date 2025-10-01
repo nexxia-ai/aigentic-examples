@@ -10,7 +10,6 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	openai "github.com/nexxia-ai/aigentic-openai"
-	"github.com/nexxia-ai/aigentic/ai"
 	"github.com/nexxia-ai/aigentic/utils"
 )
 
@@ -26,195 +25,120 @@ func getAPIKey() string {
 
 // createSendEmailTool demonstrates a simple tool that requires approval before execution
 func createSendEmailTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:            "send_email",
-		Description:     "Sends an email to a recipient with subject and body. Requires approval before sending.",
-		RequireApproval: true,
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"to": map[string]interface{}{
-					"type":        "string",
-					"description": "Email recipient address",
-				},
-				"subject": map[string]interface{}{
-					"type":        "string",
-					"description": "Email subject line",
-				},
-				"body": map[string]interface{}{
-					"type":        "string",
-					"description": "Email body content",
-				},
-			},
-			"required": []string{"to", "subject", "body"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			to := args["to"].(string)
-			subject := args["subject"].(string)
-			_ = args["body"].(string) // body variable extracted for completeness
+	type SendEmailInput struct {
+		To      string `json:"to" description:"Email recipient address"`
+		Subject string `json:"subject" description:"Email subject line"`
+		Body    string `json:"body" description:"Email body content"`
+	}
 
+	emailTool := aigentic.NewTool(
+		"send_email",
+		"Sends an email to a recipient with subject and body. Requires approval before sending.",
+		func(run *aigentic.AgentRun, input SendEmailInput) (string, error) {
 			// Simulate sending email
 			time.Sleep(500 * time.Millisecond)
-
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("Email successfully sent to %s with subject '%s'", to, subject),
-				}},
-			}, nil
+			return fmt.Sprintf("Email successfully sent to %s with subject '%s'", input.To, input.Subject), nil
 		},
-	}
+	)
+	emailTool.RequireApproval = true
+	return emailTool
 }
 
 // createDeleteFileTool demonstrates a destructive operation that requires approval
 func createDeleteFileTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:            "delete_file",
-		Description:     "Deletes a file from the filesystem. This is a destructive operation that requires approval.",
-		RequireApproval: true,
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"filepath": map[string]interface{}{
-					"type":        "string",
-					"description": "Path to the file to delete",
-				},
-				"reason": map[string]interface{}{
-					"type":        "string",
-					"description": "Reason for deleting the file",
-				},
-			},
-			"required": []string{"filepath", "reason"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			filepath := args["filepath"].(string)
-			reason := args["reason"].(string)
+	type DeleteFileInput struct {
+		Filepath string `json:"filepath" description:"Path to the file to delete"`
+		Reason   string `json:"reason" description:"Reason for deleting the file"`
+	}
 
+	deleteTool := aigentic.NewTool(
+		"delete_file",
+		"Deletes a file from the filesystem. This is a destructive operation that requires approval.",
+		func(run *aigentic.AgentRun, input DeleteFileInput) (string, error) {
 			// Simulate file deletion (don't actually delete)
 			time.Sleep(300 * time.Millisecond)
-
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("File '%s' has been deleted. Reason: %s", filepath, reason),
-				}},
-			}, nil
+			return fmt.Sprintf("File '%s' has been deleted. Reason: %s", input.Filepath, input.Reason), nil
 		},
-	}
+	)
+	deleteTool.RequireApproval = true
+	return deleteTool
 }
 
 // createTransferMoneyTool demonstrates a financial transaction with validation and approval
 func createTransferMoneyTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:            "transfer_money",
-		Description:     "Transfers money from one account to another. Requires approval for amounts over $100.",
-		RequireApproval: true,
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"from_account": map[string]interface{}{
-					"type":        "string",
-					"description": "Source account number",
-				},
-				"to_account": map[string]interface{}{
-					"type":        "string",
-					"description": "Destination account number",
-				},
-				"amount": map[string]interface{}{
-					"type":        "number",
-					"description": "Amount to transfer in USD",
-				},
-				"memo": map[string]interface{}{
-					"type":        "string",
-					"description": "Optional memo for the transaction",
-				},
-			},
-			"required": []string{"from_account", "to_account", "amount"},
-		},
-		Validate: func(run *aigentic.AgentRun, args map[string]interface{}) (aigentic.ValidationResult, error) {
-			amount, ok := args["amount"].(float64)
-			if !ok {
-				return aigentic.ValidationResult{
-					Values:  args,
-					Message: "Invalid amount format",
-					ValidationErrors: []error{
-						fmt.Errorf("amount must be a number"),
-					},
-				}, nil
-			}
+	type TransferMoneyInput struct {
+		FromAccount string  `json:"from_account" description:"Source account number"`
+		ToAccount   string  `json:"to_account" description:"Destination account number"`
+		Amount      float64 `json:"amount" description:"Amount to transfer in USD"`
+		Memo        string  `json:"memo,omitempty" description:"Optional memo for the transaction"`
+	}
 
-			// Add validation warnings for large amounts
-			var message string
-			if amount > 10000 {
-				message = fmt.Sprintf("WARNING: Large transaction amount: $%.2f", amount)
-			} else if amount > 1000 {
-				message = fmt.Sprintf("CAUTION: Moderate transaction amount: $%.2f", amount)
-			} else {
-				message = fmt.Sprintf("Transaction amount: $%.2f", amount)
-			}
-
-			return aigentic.ValidationResult{
-				Values:  args,
-				Message: message,
-			}, nil
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			fromAccount := args["from_account"].(string)
-			toAccount := args["to_account"].(string)
-			amount := args["amount"].(float64)
-			memo := ""
-			if m, ok := args["memo"].(string); ok {
-				memo = m
-			}
-
+	transferTool := aigentic.NewTool(
+		"transfer_money",
+		"Transfers money from one account to another. Requires approval for amounts over $100.",
+		func(run *aigentic.AgentRun, input TransferMoneyInput) (string, error) {
 			// Simulate money transfer
 			time.Sleep(1 * time.Second)
 
-			result := fmt.Sprintf("Successfully transferred $%.2f from %s to %s", amount, fromAccount, toAccount)
-			if memo != "" {
-				result += fmt.Sprintf(" (Memo: %s)", memo)
+			result := fmt.Sprintf("Successfully transferred $%.2f from %s to %s", input.Amount, input.FromAccount, input.ToAccount)
+			if input.Memo != "" {
+				result += fmt.Sprintf(" (Memo: %s)", input.Memo)
 			}
 
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: result,
-				}},
-			}, nil
+			return result, nil
 		},
+	)
+	transferTool.RequireApproval = true
+
+	// Add custom validation for large amounts
+	transferTool.Validate = func(run *aigentic.AgentRun, args map[string]interface{}) (aigentic.ValidationResult, error) {
+		amount, ok := args["amount"].(float64)
+		if !ok {
+			return aigentic.ValidationResult{
+				Values:  args,
+				Message: "Invalid amount format",
+				ValidationErrors: []error{
+					fmt.Errorf("amount must be a number"),
+				},
+			}, nil
+		}
+
+		// Add validation warnings for large amounts
+		var message string
+		if amount > 10000 {
+			message = fmt.Sprintf("WARNING: Large transaction amount: $%.2f", amount)
+		} else if amount > 1000 {
+			message = fmt.Sprintf("CAUTION: Moderate transaction amount: $%.2f", amount)
+		} else {
+			message = fmt.Sprintf("Transaction amount: $%.2f", amount)
+		}
+
+		return aigentic.ValidationResult{
+			Values:  args,
+			Message: message,
+		}, nil
 	}
+
+	return transferTool
 }
 
 // createDatabaseQueryTool demonstrates a read-only tool that doesn't require approval
 func createDatabaseQueryTool() aigentic.AgentTool {
-	return aigentic.AgentTool{
-		Name:            "query_database",
-		Description:     "Queries the database for information. Read-only operation, no approval needed.",
-		RequireApproval: false, // Explicitly false for demonstration
-		InputSchema: map[string]interface{}{
-			"type": "object",
-			"properties": map[string]interface{}{
-				"query": map[string]interface{}{
-					"type":        "string",
-					"description": "SQL query to execute",
-				},
-			},
-			"required": []string{"query"},
-		},
-		Execute: func(run *aigentic.AgentRun, args map[string]interface{}) (*ai.ToolResult, error) {
-			query := args["query"].(string)
+	type DatabaseQueryInput struct {
+		Query string `json:"query" description:"SQL query to execute"`
+	}
 
+	queryTool := aigentic.NewTool(
+		"query_database",
+		"Queries the database for information. Read-only operation, no approval needed.",
+		func(run *aigentic.AgentRun, input DatabaseQueryInput) (string, error) {
 			// Simulate database query
 			time.Sleep(200 * time.Millisecond)
-
-			return &ai.ToolResult{
-				Content: []ai.ToolContent{{
-					Type:    "text",
-					Content: fmt.Sprintf("Query executed: %s\nResults: [{'id': 1, 'name': 'Sample Data'}]", query),
-				}},
-			}, nil
+			return fmt.Sprintf("Query executed: %s\nResults: [{'id': 1, 'name': 'Sample Data'}]", input.Query), nil
 		},
-	}
+	)
+	queryTool.RequireApproval = false // Explicitly false for demonstration
+	return queryTool
 }
 
 // simulateApprovalUI simulates a user interface for approval decisions
