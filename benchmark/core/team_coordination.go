@@ -7,6 +7,7 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	"github.com/nexxia-ai/aigentic/ai"
+	"github.com/nexxia-ai/aigentic/memory"
 )
 
 // NewTeamCoordinationAgent creates a coordinator agent with subagents
@@ -48,7 +49,7 @@ func NewTeamCoordinationAgent(model *ai.Model) aigentic.Agent {
 			"Do not add commentary.",
 		Agents: []aigentic.Agent{lookup, companyCreator, invoiceCreator},
 		Trace:  aigentic.NewTrace(),
-		Memory: aigentic.NewMemory(),
+		Memory: memory.NewMemory(),
 		// LogLevel: slog.LevelDebug,
 	}
 

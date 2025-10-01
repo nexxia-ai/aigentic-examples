@@ -7,6 +7,7 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	"github.com/nexxia-ai/aigentic/ai"
+	"github.com/nexxia-ai/aigentic/memory"
 )
 
 // NewMemoryPersistenceAgent creates a coordinator agent that uses memory
@@ -41,7 +42,7 @@ func NewMemoryPersistenceAgent(model *ai.Model) aigentic.Agent {
 			"Do not make up information. You must use the tools to get the information.",
 		Agents: []aigentic.Agent{lookupCompany, lookupSupplier},
 		Trace:  aigentic.NewTrace(),
-		Memory: aigentic.NewMemory(), // this is important to save the plan
+		Memory: memory.NewMemory(), // this is important to save the plan
 	}
 
 	return coordinator
@@ -62,7 +63,7 @@ func RunMemoryPersistenceAgent(model *ai.Model) (BenchResult, error) {
 			"2) Save the result to memory using save_memory. " +
 			"3) Call 'lookup_company_supplier' with input 'Look up supplier 200'. " +
 			"4) Save the result to memory again, including previous memory content. " +
-			"5) When you have the company and the supplier details, then respond with exactly the full content of ContextMemory.md (no extra text).",
+			"5) When you have the company and the supplier details, then respond with exactly the full content of the run memory (no extra text).",
 	)
 	if err != nil {
 		result := CreateBenchResult("MemoryPersistence", model, start, "", err)

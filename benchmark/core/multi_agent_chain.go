@@ -8,6 +8,7 @@ import (
 	"github.com/nexxia-ai/aigentic"
 	"github.com/nexxia-ai/aigentic/ai"
 	"github.com/nexxia-ai/aigentic/evals"
+	"github.com/nexxia-ai/aigentic/memory"
 )
 
 // Agent definitions as variables at the top
@@ -25,7 +26,7 @@ var basicCoordinatorAgent = aigentic.Agent{
 		Do no make up information. Use only the names provided by the agents.
 		Return the final names as received from the last expert. do not add any additional text or commentary.`,
 	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           aigentic.NewMemory(),
+	Memory:           memory.NewMemory(),
 	Trace:            aigentic.NewTrace(),
 	EnableEvaluation: true,
 }
@@ -49,7 +50,7 @@ RULES:
 - Use actual expert responses
 - Present clear final table`,
 	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           aigentic.NewMemory(),
+	Memory:           memory.NewMemory(),
 	Trace:            aigentic.NewTrace(),
 	EnableEvaluation: true,
 }
@@ -70,7 +71,7 @@ Execute these steps in exact order:
 
 Execute directly without overanalyzing.`,
 	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           aigentic.NewMemory(),
+	Memory:           memory.NewMemory(),
 	Trace:            aigentic.NewTrace(),
 	EnableEvaluation: true,
 }
@@ -91,7 +92,7 @@ SEQUENTIAL PROTOCOL:
 
 Execute one step at a time in strict order.`,
 	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           aigentic.NewMemory(),
+	Memory:           memory.NewMemory(),
 	Trace:            aigentic.NewTrace(),
 	EnableEvaluation: true,
 }
