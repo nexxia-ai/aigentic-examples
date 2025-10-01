@@ -1,52 +1,20 @@
 # Document Processing Example
 
-This example demonstrates how to work with documents in aigentic agents, including text files, images, PDFs, and other document types.
+This example demonstrates how to work with documents in aigentic agents by analyzing an employment contract.
 
 ## What You'll Learn
 
 - Embedding documents directly in agent context
-- Using document references for on-demand retrieval
-- Loading documents from local filesystem
-- Processing multiple documents simultaneously
+- Processing text documents for information extraction
 - Extracting structured data from documents
-- Best practices for different document scenarios
+- Best practices for document analysis
 
-## Examples Demonstrated
+## Example Demonstrated
 
-### 1. Embedded Text Document
-Analyze an employment contract by embedding the full text in the agent's context.
+### Contract Analysis
+Analyze an employment contract by embedding the full text in the agent's context and extracting key information.
 
-**Use case**: Contract analysis, legal document review
-
-**Pattern**: Small documents that need to be fully accessible
-
-### 2. Embedded Image Document
-Extract structured data from a receipt image.
-
-**Use case**: Receipt processing, invoice extraction, OCR tasks
-
-**Pattern**: Visual document analysis with specific data extraction
-
-### 3. Document References
-Use document references for large documentation sets where the LLM retrieves content on-demand.
-
-**Use case**: Knowledge bases, technical documentation, FAQ systems
-
-**Pattern**: Large document collections where only relevant sections are needed
-
-### 4. Multi-Document Analysis
-Compare and analyze multiple quarterly financial reports together.
-
-**Use case**: Financial analysis, trend identification, comparative reporting
-
-**Pattern**: Analyzing relationships and patterns across multiple documents
-
-### 5. Local Document Store
-Load documents from the filesystem using the LocalStore implementation.
-
-**Use case**: File-based document management, existing document repositories
-
-**Pattern**: Lazy loading from disk storage
+**Use case**: Contract analysis, legal document review, information extraction
 
 ## Running the Example
 

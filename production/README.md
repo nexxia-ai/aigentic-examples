@@ -1,6 +1,6 @@
 # Production-Ready Patterns Example
 
-This example demonstrates production-ready patterns for building reliable, maintainable, and robust AI agents with aigentic. Learn the essential patterns that distinguish a proof-of-concept from a production system.
+This example demonstrates production-ready patterns for building reliable, maintainable, and robust AI agents with aigentic.
 
 ## What You'll Learn
 
@@ -31,190 +31,18 @@ ENV=prod go run main.go
 go run github.com/nexxia-ai/aigentic-examples/production@latest
 ```
 
-## Examples Demonstrated
+## Example Demonstrated
 
-### Example 1: Robust Error Handling
+### Comprehensive Production Setup
 
-Learn to handle three types of errors:
+This example combines all production patterns into a single, production-ready agent:
 
-1. **Tool Errors** - Graceful degradation when tools fail
-2. **Critical Errors** - Proper propagation of fatal errors
-3. **Transient Errors** - Recoverable errors with helpful messages
-
-```go
-agent := aigentic.Agent{
-    Model:    model,
-    Retries:  2, // Retry failed operations
-    LogLevel: slog.LevelInfo,
-}
-
-response, err := agent.Execute("Check system status")
-if err != nil {
-    // Handle different error scenarios
-    log.Printf("Agent failed: %v", err)
-    return
-}
-```
-
-### Example 2: Using Trace for Debugging
-
-Traces capture complete execution history for debugging:
-
-```go
-trace := aigentic.NewTrace()
-
-agent := aigentic.Agent{
-    Model:    model,
-    Trace:    trace, // Enable tracing
-    LogLevel: slog.LevelDebug,
-}
-
-response, err := agent.Execute("Your query")
-
-// Review trace file to see:
-// - All LLM interactions
-// - Tool calls and responses
-// - Timing information
-// - Context sent to model
-fmt.Printf("Trace session ID: %s\n", trace.SessionID)
-```
-
-### Example 3: MaxLLMCalls Limit
-
-Prevent infinite loops and control costs:
-
-```go
-agent := aigentic.Agent{
-    Model:       model,
-    MaxLLMCalls: 10, // Maximum 10 LLM calls per execution
-}
-
-// Agent will stop after 10 calls even if not finished
-response, err := agent.Execute("Complex task")
-```
-
-**What it protects against:**
-- Infinite tool call loops
-- Excessive API costs
-- Long-running processes
-- Agent stuck states
-
-### Example 4: Retry Configuration
-
-Handle transient failures automatically:
-
-```go
-agent := aigentic.Agent{
-    Model:   model,
-    Retries: 3, // Retry up to 3 times on failure
-}
-
-// Agent will automatically retry on:
-// - Network errors
-// - Temporary service outages
-// - Rate limiting
-```
-
-### Example 5: Log Level Configuration
-
-Adjust logging verbosity by environment:
-
-```go
-// Development - verbose logging
-devAgent := aigentic.Agent{
-    LogLevel: slog.LevelDebug,
-}
-
-// Production - minimal logging
-prodAgent := aigentic.Agent{
-    LogLevel: slog.LevelWarn,
-}
-```
-
-**Log Level Guide:**
-- `Debug` - Development, debugging, troubleshooting
-- `Info` - Default, general operational information
-- `Warn` - Production, only warnings and errors
-- `Error` - Critical issues only
-
-### Example 6: Context Cancellation
-
-Handle timeouts and graceful shutdown:
-
-```go
-// Create session with timeout
-ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-defer cancel()
-
-session := aigentic.NewSession(ctx)
-
-agent := aigentic.Agent{
-    Model:   model,
-    Session: session,
-}
-
-run, err := agent.Start("Your query")
-response, err := run.Wait(0)
-
-if ctx.Err() == context.DeadlineExceeded {
-    log.Printf("Agent timed out")
-} else if ctx.Err() == context.Canceled {
-    log.Printf("Agent was cancelled")
-}
-
-// Cleanup
-session.Cancel()
-```
-
-**Use cases:**
-- Request timeouts
-- Graceful shutdown (SIGTERM)
-- User cancellation (Ctrl+C)
-- Resource cleanup
-
-### Example 7: Comprehensive Production Setup
-
-All patterns combined:
-
-```go
-// Setup
-ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-defer cancel()
-
-session := aigentic.NewSession(ctx)
-trace := aigentic.NewTrace()
-
-// Production-ready agent
-agent := aigentic.Agent{
-    Model:       model,
-    Session:     session,
-    Trace:       trace,
-    Retries:     2,
-    MaxLLMCalls: 10,
-    LogLevel:    slog.LevelWarn,
-    AgentTools:  []aigentic.AgentTool{productionTool},
-}
-
-// Execute with error handling
-response, err := agent.Execute("Production query")
-if err != nil {
-    if ctx.Err() == context.DeadlineExceeded {
-        log.Printf("ERROR: Timeout")
-    } else if ctx.Err() == context.Canceled {
-        log.Printf("ERROR: Cancelled")
-    } else {
-        log.Printf("ERROR: %v", err)
-    }
-    // Log to monitoring system
-    return
-}
-
-// Success - log metrics
-log.Printf("Success: session=%s", trace.SessionID)
-
-// Cleanup
-session.Cancel()
-```
+- **Error Handling**: Handle LLM failures, tool errors, and timeouts gracefully
+- **Trace & Debug**: Use traces to understand and debug agent behavior
+- **Safety Limits**: Prevent runaway loops with MaxLLMCalls
+- **Retry Logic**: Configure automatic retries for transient failures
+- **Logging**: Adjust log levels for different environments
+- **Cancellation**: Handle timeouts and graceful shutdown with context
 
 ## Production Considerations
 

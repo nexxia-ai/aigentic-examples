@@ -1,35 +1,19 @@
-### Memory System Example
+# Memory System Example
 
-This example demonstrates aigentic's compartmentalized memory system for building agents that remember context across conversations and coordinate through shared state.
+This example demonstrates aigentic's session memory system for building agents that remember context across conversations.
 
 ## What You'll Learn
 
-- Using run memory for temporary task state
 - Implementing session memory for persistent context
-- Managing complex plans with plan memory
-- Sharing memory across multi-agent systems
+- Using memory to remember user preferences and information
 - Best practices for memory usage
 
 ## Memory Compartments
 
-Aigentic provides three types of memory:
-
-### 1. Run Memory
-- **Scope**: Single agent execution (one `Execute()` or `Start()` call)
-- **Persistence**: Cleared after agent run completes
-- **Use Cases**: Task progress, intermediate calculations, temporary state
-- **Access**: Automatically included in context (no tool call needed)
-
-### 2. Session Memory
+### Session Memory
 - **Scope**: All agent runs within the same session
 - **Persistence**: Lasts for the session lifetime
 - **Use Cases**: User preferences, conversation context, shared information
-- **Access**: Must retrieve using `get_memory` tool
-
-### 3. Plan Memory
-- **Scope**: Complex multi-step plans
-- **Persistence**: Configurable (run-level or session-level)
-- **Use Cases**: Project plans, workflows, progress tracking
 - **Access**: Must retrieve using `get_memory` tool
 
 ## Running the Example
@@ -46,19 +30,10 @@ cd memory
 go run main.go
 ```
 
-## Examples Demonstrated
+## Example Demonstrated
 
-### Example 1: Run Memory
-Tracking multi-step task progress within a single agent execution.
-
-### Example 2: Session Memory
+### Session Memory
 Personal assistant that remembers user information across conversations.
-
-### Example 3: Plan Memory
-Project planner that creates, tracks, and updates complex plans.
-
-### Example 4: Shared Memory in Multi-Agent Systems
-Research and writing team coordinating through shared session memory.
 
 ## How to Use Memory
 

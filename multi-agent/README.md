@@ -4,28 +4,17 @@ This example demonstrates how to build multi-agent systems where agents coordina
 
 ## What You'll Learn
 
-- Creating hierarchical agent structures
+- Creating agent teams with specialized roles
 - Delegating tasks to specialized agents
-- Building expert panels with multiple perspectives
-- Coordinating complex workflows across agent teams
+- Coordinating workflows across agent teams
 - Managing agent-to-agent communication
 
-## Examples Demonstrated
+## Example Demonstrated
 
-### 1. Research and Writing Team
+### Research and Writing Team
 A project manager coordinates a researcher and writer to produce articles.
 
 **Pattern**: Linear delegation (Research → Write)
-
-### 2. Expert Panel
-Multiple domain experts (Tech, Business, UX) provide perspectives on a decision.
-
-**Pattern**: Parallel consultation + synthesis
-
-### 3. Hierarchical Organization
-A CEO coordinates department heads who manage their own specialist teams.
-
-**Pattern**: Multi-level hierarchy (CEO → Dept Heads → Specialists)
 
 ## Running the Example
 

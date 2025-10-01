@@ -13,8 +13,7 @@ This example demonstrates how to create and use custom tools with aigentic agent
 ## Tools Demonstrated
 
 1. **Calculator Tool** - Performs mathematical operations
-2. **Weather Tool** - Retrieves weather information (mock data)
-3. **Time Tool** - Gets current time in different timezones
+2. **Time Tool** - Gets current time in different timezones
 
 ## Running the Example
 

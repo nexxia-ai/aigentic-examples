@@ -1,6 +1,6 @@
 # Human-in-the-Loop Approval Example
 
-This example demonstrates how to implement human-in-the-loop approval workflows for sensitive operations in aigentic. When agents need to perform critical actions like sending emails, deleting files, or transferring money, you can require explicit human approval before execution.
+This example demonstrates how to implement human-in-the-loop approval workflows for sensitive operations in aigentic. When agents need to perform critical actions like sending emails, you can require explicit human approval before execution.
 
 ## What You'll Learn
 
@@ -8,31 +8,14 @@ This example demonstrates how to implement human-in-the-loop approval workflows 
 - Handling `ApprovalEvent` in the agent event stream
 - Implementing approval UI/workflows
 - Using validation functions to provide context for approval decisions
-- Combining tools that require approval with tools that don't
-- Timeout handling and rejection flows
-- Best practices for building production approval systems
+- Best practices for building approval systems
 
-## Examples Demonstrated
+## Example Demonstrated
 
-### 1. Simple Email Approval
+### Email Approval
 Shows basic approval workflow for sending emails. The agent requests to send an email, and the human must approve before it's sent.
 
 **Use Case**: Preventing accidental or unauthorized email communications
-
-### 2. File Deletion Approval
-Demonstrates approval for destructive operations that can't be easily undone.
-
-**Use Case**: Protecting critical files from accidental deletion
-
-### 3. Financial Transaction with Validation
-Shows advanced approval with custom validation logic that provides warnings for large amounts.
-
-**Use Case**: Preventing unauthorized or erroneous financial transactions
-
-### 4. Mixed Tools with Selective Approval
-Demonstrates combining tools that require approval (transfers) with tools that don't (read-only queries).
-
-**Use Case**: Balancing security with efficiency - only approve risky operations
 
 ## Running the Example
 
@@ -43,12 +26,9 @@ export OPENAI_API_KEY=your_api_key_here
 # Run from the examples directory
 go run github.com/nexxia-ai/aigentic-examples/approval@latest
 
-# Or run locally (interactive mode)
+# Or run locally
 cd approval
 go run main.go
-
-# Run in automated mode (auto-approves all requests)
-go run main.go --auto
 ```
 
 ## How It Works
