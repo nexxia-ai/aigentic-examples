@@ -3,7 +3,7 @@ module github.com/nexxia-ai/aigentic-examples/streaming
 go 1.24.3
 
 require (
-	github.com/nexxia-ai/aigentic v0.7.0
+	github.com/nexxia-ai/aigentic v0.8.0
 	github.com/nexxia-ai/aigentic-openai v0.3.1
 )
 

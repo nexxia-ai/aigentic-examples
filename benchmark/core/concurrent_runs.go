@@ -16,7 +16,7 @@ func RunConcurrentRuns(model *ai.Model) (BenchResult, error) {
 		Description:  "You are a helpful assistant that can perform various tasks.",
 		Instructions: "use tools when requested.",
 		AgentTools:   []aigentic.AgentTool{NewCompanyNameTool()},
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 
 	// Define multiple sequential runs

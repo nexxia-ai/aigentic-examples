@@ -7,7 +7,7 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	"github.com/nexxia-ai/aigentic/ai"
-	"github.com/nexxia-ai/aigentic/memory"
+	"github.com/nexxia-ai/aigentic/tools"
 )
 
 // NewTeamCoordinationAgent creates a coordinator agent with subagents
@@ -48,8 +48,8 @@ func NewTeamCoordinationAgent(model *ai.Model) aigentic.Agent {
 			"Use the save_memory tool to persist important context between tool calls, especially after getting company information and getting invoice information. " +
 			"Do not add commentary.",
 		Agents: []aigentic.Agent{lookup, companyCreator, invoiceCreator},
-		Trace:  aigentic.NewTrace(),
-		Memory: memory.NewMemory(),
+		Tracer: aigentic.NewTracer(),
+		AgentTools: []aigentic.AgentTool{tools.NewMemoryTool()},
 		// LogLevel: slog.LevelDebug,
 	}
 

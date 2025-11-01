@@ -8,7 +8,7 @@ import (
 	"github.com/nexxia-ai/aigentic"
 	"github.com/nexxia-ai/aigentic/ai"
 	"github.com/nexxia-ai/aigentic/evals"
-	"github.com/nexxia-ai/aigentic/memory"
+	"github.com/nexxia-ai/aigentic/tools"
 )
 
 // Agent definitions as variables at the top
@@ -25,9 +25,8 @@ var basicCoordinatorAgent = aigentic.Agent{
 		You must call each expert in order and wait for the expert's response before calling the next expert. ie. call expert1, wait for the response, then call expert2, wait for the response, then call expert3, wait for the response.
 		Do no make up information. Use only the names provided by the agents.
 		Return the final names as received from the last expert. do not add any additional text or commentary.`,
-	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           memory.NewMemory(),
-	Trace:            aigentic.NewTrace(),
+	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool(), tools.NewMemoryTool()},
+	Tracer:           aigentic.NewTracer(),
 	EnableEvaluation: true,
 }
 
@@ -49,9 +48,8 @@ RULES:
 - Save progress to memory
 - Use actual expert responses
 - Present clear final table`,
-	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           memory.NewMemory(),
-	Trace:            aigentic.NewTrace(),
+	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool(), tools.NewMemoryTool()},
+	Tracer:           aigentic.NewTracer(),
 	EnableEvaluation: true,
 }
 
@@ -70,9 +68,8 @@ Execute these steps in exact order:
 7. Present table
 
 Execute directly without overanalyzing.`,
-	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           memory.NewMemory(),
-	Trace:            aigentic.NewTrace(),
+	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool(), tools.NewMemoryTool()},
+	Tracer:           aigentic.NewTracer(),
 	EnableEvaluation: true,
 }
 
@@ -91,9 +88,8 @@ SEQUENTIAL PROTOCOL:
 7. Present and stop
 
 Execute one step at a time in strict order.`,
-	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool()},
-	Memory:           memory.NewMemory(),
-	Trace:            aigentic.NewTrace(),
+	AgentTools:       []aigentic.AgentTool{NewCompanyNameTool(), tools.NewMemoryTool()},
+	Tracer:           aigentic.NewTracer(),
 	EnableEvaluation: true,
 }
 

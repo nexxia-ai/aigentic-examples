@@ -36,7 +36,7 @@ func main() {
 	defer cancel()
 
 	session := aigentic.NewSession(ctx)
-	trace := aigentic.NewTrace()
+	tracer := aigentic.NewTracer()
 
 	type FetchDataInput struct {
 		Query string `json:"query" description:"The data query to execute"`
@@ -62,14 +62,18 @@ func main() {
 		Instructions: "You are a data assistant. Help users query their data safely and efficiently.",
 		Session:      session,
 		AgentTools:   []aigentic.AgentTool{dataTool},
-		Trace:        trace,
+		Tracer:       tracer,
 		Retries:      2,
 		MaxLLMCalls:  10,
 		LogLevel:     slog.LevelInfo,
 	}
 
 	fmt.Println("Executing production agent...")
-	response, err := agent.Execute("Fetch data for user activity in the last 24 hours")
+	run, err := agent.Start("Fetch data for user activity in the last 24 hours")
+	if err != nil {
+		log.Fatalf("Failed to start agent: %v", err)
+	}
+	response, err := run.Wait(0)
 
 	if err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
@@ -85,8 +89,9 @@ func main() {
 	fmt.Printf("Response: %s\n\n", response)
 
 	fmt.Println("Production agent completed successfully!")
-	traceDir := "/tmp/aigentic-traces"
-	fmt.Printf("Trace available at: %s/trace-%s.txt\n", traceDir, trace.SessionID)
+	if run.TraceFilepath() != "" {
+		fmt.Printf("Trace available at: %s\n", run.TraceFilepath())
+	}
 	fmt.Println()
 	fmt.Println("Production features enabled:")
 	fmt.Println("✓ Context timeout configured")

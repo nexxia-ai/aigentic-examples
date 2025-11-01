@@ -16,7 +16,7 @@ func RunStreaming(model *ai.Model) (BenchResult, error) {
 		Description:  "You are a helpful assistant that provides clear and concise answers.",
 		Instructions: "Always explain your reasoning and provide examples when possible.",
 		Stream:       true,
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 
 	run, err := agent.Start("What is the capital of France and give me a brief summary of the city")
@@ -70,7 +70,7 @@ func RunStreamingWithTools(model *ai.Model) (BenchResult, error) {
 		Instructions: "Always explain your reasoning and provide examples when possible.",
 		Stream:       true,
 		AgentTools:   []aigentic.AgentTool{NewCompanyNameTool()},
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 
 	run, err := agent.Start("tell me the name of the company with the number 150. Use tools.")

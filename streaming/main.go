@@ -38,7 +38,7 @@ func main() {
 		Description:  "You are a helpful AI assistant that provides clear and informative responses.",
 		Instructions: "Provide detailed explanations and be helpful. When answering questions, be thorough but concise.",
 		Stream:       true,
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 
 	question := strings.Join(os.Args[1:], " ")

@@ -64,7 +64,7 @@ func main() {
 		`,
 
 		AgentTools: agentTools,
-		Trace:      aigentic.NewTrace(),
+		Tracer:     aigentic.NewTracer(),
 		// IncludeHistory: true,
 	}
 	result, err := agent.Execute("Fetch the latest news from the abc.com.au, format it in markdown and save it to a file called ./news.md. ")

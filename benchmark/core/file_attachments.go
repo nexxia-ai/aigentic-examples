@@ -18,7 +18,7 @@ func RunFileAttachmentsAgent(model *ai.Model) (BenchResult, error) {
 		Description:  "You are a helpful assistant that analyzes text files and provides insights.",
 		Instructions: "When you see a file reference, analyze it and provide a summary. If you cannot access the file, explain why.",
 		Documents:    []*document.Document{doc},
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 
 	response, err := agent.Execute("Please analyze the attached file and tell me what it contains. If you are able to analyse the file, start your response with 'SUCCESS:' followed by the analysis.")

@@ -7,7 +7,7 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	"github.com/nexxia-ai/aigentic/ai"
-	"github.com/nexxia-ai/aigentic/memory"
+	"github.com/nexxia-ai/aigentic/tools"
 )
 
 // NewMemoryPersistenceAgent creates a coordinator agent that uses memory
@@ -41,8 +41,8 @@ func NewMemoryPersistenceAgent(model *ai.Model) aigentic.Agent {
 			"5) Return only the memory content (no commentary). " +
 			"Do not make up information. You must use the tools to get the information.",
 		Agents: []aigentic.Agent{lookupCompany, lookupSupplier},
-		Trace:  aigentic.NewTrace(),
-		Memory: memory.NewMemory(), // this is important to save the plan
+		Tracer: aigentic.NewTracer(),
+		AgentTools: []aigentic.AgentTool{tools.NewMemoryTool()},
 	}
 
 	return coordinator

@@ -16,7 +16,7 @@ func RunToolIntegration(model *ai.Model) (BenchResult, error) {
 		Description:  "You are a helpful assistant that provides clear and concise answers.",
 		Instructions: "Always explain your reasoning and provide examples when possible. Use tools when requested.",
 		AgentTools:   []aigentic.AgentTool{NewCompanyNameTool()},
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 
 	run, err := agent.Start("tell me the name of the company with the number 150. Use tools.")

@@ -8,7 +8,7 @@ import (
 
 	"github.com/nexxia-ai/aigentic"
 	openai "github.com/nexxia-ai/aigentic-openai"
-	"github.com/nexxia-ai/aigentic/memory"
+	"github.com/nexxia-ai/aigentic/tools"
 	"github.com/nexxia-ai/aigentic/utils"
 )
 
@@ -37,9 +37,9 @@ func main() {
 		Model:        model,
 		Name:         "PersonalAssistant",
 		Description:  "A personal assistant that remembers user preferences and context",
-		Instructions: "You are a personal assistant. Remember user preferences, past interactions, and important information using session memory. Use save_memory tool with compartment 'session' for information that should persist across conversations.",
+		Instructions: "You are a personal assistant. Remember user preferences, past interactions, and important information using the update_memory tool.",
 		Session:      session,
-		Memory:       memory.NewMemory(),
+		AgentTools:   []aigentic.AgentTool{tools.NewMemoryTool()},
 	}
 
 	fmt.Println("First conversation:")

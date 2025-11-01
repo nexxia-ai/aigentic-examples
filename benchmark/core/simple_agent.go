@@ -16,7 +16,7 @@ func RunSimpleAgent(model *ai.Model) (BenchResult, error) {
 		Model:        model,
 		Description:  "A basic conversational agent that provides clear and helpful responses",
 		Instructions: "Answer questions clearly and concisely. For geography questions, provide accurate information.",
-		Trace:        aigentic.NewTrace(),
+		Tracer:       aigentic.NewTracer(),
 	}
 	response, err := agent.Execute("What is the capital of Australia?")
 
